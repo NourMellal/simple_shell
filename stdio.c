@@ -1,6 +1,5 @@
 #include "main.h"
- 
-//write me a function that reads a line from stdin
+
 
 char *read_line(void)
 {
