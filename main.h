@@ -21,4 +21,8 @@ typedef struct cname
 
 char *read_line(void);
 
+int len(char *s);
+void str_rev(char s[]);
+
+
 #endif /* MIAN_H */
