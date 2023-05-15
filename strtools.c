@@ -1,13 +1,24 @@
 #include "main.h"
 
+/**
+ * str_len - Calculates the length of a string.
+ * @s: The input string.
+ *
+ * Return: The length of the string.
+ */
 int str_len(char *s)
 {
 	int len = 0;
-	while(*s++)
+
+	while (*s++)
 		len++;
 	return (len);
 }
 
+/**
+ * str_rev - Reverses a string.
+ * @s: The string to be reversed.
+ */
 void str_rev(char s[])
 {
 	char temp;
@@ -23,6 +34,13 @@ void str_rev(char s[])
 	}
 }
 
+/**
+ * _stb - Copies a string to a buffer.
+ * @s: The string to be copied.
+ * @buf: The destination buffer.
+ *
+ * Return: The length of the copied string.
+ */
 int _stb(char *s, char *buf)
 {
 	int i = 0;
@@ -41,10 +59,17 @@ int _stb(char *s, char *buf)
 		p++;
 	}
 
-	return i;
+	return (i);
 }
 
-
+/**
+ * _strcmp - Compares two strings.
+ * @s1: The first string to be compared.
+ * @s2: The second string to be compared.
+ *
+ * Return: The difference between the first differing characters
+ *         (0 if the strings are equal).
+ */
 int _strcmp(const char *s1, const char *s2)
 {
 	while (*s1 && (*s1 == *s2))
@@ -52,11 +77,17 @@ int _strcmp(const char *s1, const char *s2)
 		s1++;
 		s2++;
 	}
-
-	return (int)(unsigned char)(*s1) - (int)(unsigned char)(*s2);
+	return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
 }
 
-
+/**
+ * _memcpy - Copies a memory block from source to destination.
+ * @dest: The destination memory block.
+ * @src: The source memory block.
+ * @n: The number of bytes to copy.
+ *
+ * Return: A pointer to the destination memory block.
+ */
 void *_memcpy(void *dest, const void *src, size_t n)
 {
 	char *d = dest;
