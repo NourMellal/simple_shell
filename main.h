@@ -22,7 +22,7 @@
  * @name: Pointer to the command name string
  * @func: Pointer to the function associated with the command
  */
-typedef struct command
+typedef struct cmd
 {
 	char *name;
 	void (*func)(char **);
@@ -49,5 +49,9 @@ void _sprintf(char *str, const char *fmt, ...);
 /* num_tools */
 int _atoi(const char *str);
 int _itoa(long n, char s[], int base, int sign);
+
+/* builtins functions*/
+cmd *get_built(void);
+int num_built(void);
 
 #endif
