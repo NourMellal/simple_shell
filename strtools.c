@@ -23,3 +23,46 @@ void str_rev(char s[])
 	}
 }
 
+int _stb(char *s, char *buf)
+{
+	int i = 0;
+	char *p;
+
+	if (s == NULL)
+		p = "(null)";
+
+	else
+		p = s;
+
+	while (*p)
+	{
+		buf[i] = *p;
+		i++;
+		p++;
+	}
+
+	return i;
+}
+
+
+int _strcmp(const char *s1, const char *s2)
+{
+	while (*s1 && (*s1 == *s2))
+	{
+		s1++;
+		s2++;
+	}
+
+	return (int)(unsigned char)(*s1) - (int)(unsigned char)(*s2);
+}
+
+
+void *_memcpy(void *dest, const void *src, size_t n)
+{
+	char *d = dest;
+	const char *s = src;
+
+	while (n--)
+		*d++ = *s++;
+	return (dest);
+}

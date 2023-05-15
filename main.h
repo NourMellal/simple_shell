@@ -21,8 +21,11 @@ typedef struct cname
 
 char *read_line(void);
 
-int len(char *s);
+int str_len(char *s);
 void str_rev(char s[]);
+int _stb(char *s, char *buf);
+int _strcmp(const char *s1, const char *s2);
+
 
 
 #endif /* MIAN_H */
