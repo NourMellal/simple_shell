@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+/* including the files for sShell project */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include "sys/stat.h"
@@ -39,6 +41,7 @@ char *_strdup(const char *s);
 void execute_command(char **args, int *status);
 
 /* Sprintf */
+void _vsprintf(char *str, const char *fmt, va_list ap);
 void _printf(const char *fmt, ...);
 void _fprintf(int fd, const char *fmt, ...);
 void _sprintf(char *str, const char *fmt, ...);
