@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #define B_SIZE 1024
 
@@ -26,7 +27,6 @@ int str_len(char *s);
 void str_rev(char s[]);
 int _stb(char *s, char *buf);
 int _strcmp(const char *s1, const char *s2);
-void write_fd(int fd, char *s)
 void *_memcpy(void *dest, const void *src, size_t n);
 char *_strdup(const char *s);
 
@@ -35,4 +35,4 @@ int _itoa(long x, char s[], int base, int sign);
 int _atoi(const char *str);
 
 
-#endif /* MIAN_H */
+#endif /* MAIN_H */
