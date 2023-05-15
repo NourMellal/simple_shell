@@ -42,8 +42,8 @@ int _itoa(long x, char s[], int base, int sign)
  */
 int _atoi(const char *str)
 {
-	
 	unsigned int i = 0, result = 0, sgn = 1;
+
 	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n')
 		i++;
 
@@ -56,6 +56,6 @@ int _atoi(const char *str)
 
 	for (; str[i] >= '0' && str[i] <= '9'; i++)
 		result = result * 10 + (str[i] - '0');
-	
+
 	return (sgn * result);
 }
