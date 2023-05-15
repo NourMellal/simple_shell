@@ -31,7 +31,7 @@ int _itoa(long x, char s[], int base, int sign)
 		s[i++] = '-';
 
 	s[i] = '\0';
-	reverse_str(s);
+	str_rev(s);
 	return (i);
 }
 

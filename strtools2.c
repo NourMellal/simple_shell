@@ -7,10 +7,12 @@
  */
 void write_fd(int fd, char *s)
 {
+	int length = 0;
+
 	if (!s)
 		s = "(null)";
 
-	int length = str_len(s);
+	length = str_len(s);
 
 	write(fd, s, length);
 }
@@ -25,7 +27,7 @@ char *_strdup(const char *s)
 	int i;
 	char *result;
 
-	result = malloc(sizeof(char) * (_strlen((char *)s) + 1));
+	result = malloc(sizeof(char) * (str_len((char *)s) + 1));
 	if (result == NULL)
 		return (NULL);
 
