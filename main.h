@@ -30,5 +30,9 @@ void write_fd(int fd, char *s)
 void *_memcpy(void *dest, const void *src, size_t n);
 char *_strdup(const char *s);
 
+/* num tools */
+int _itoa(long x, char s[], int base, int sign);
+int _atoi(const char *str);
+
 
 #endif /* MIAN_H */
