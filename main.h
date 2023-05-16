@@ -25,7 +25,7 @@
 typedef struct cmd
 {
 	char *name;
-	void (*func)(char **);
+	void (*func)(shell *);
 } cmd;
 
 /**
