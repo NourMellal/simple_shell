@@ -78,3 +78,8 @@ void execute_command(shell *sh)
 		external_command(sh);
 }
 
+/**
+ * find_command - Finds the full path of a command in the PATH environment
+ * @command: The command to search for
+ * Return: A pointer to the full path of the command, or NULL if not found
+ */
