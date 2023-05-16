@@ -16,6 +16,8 @@
 
 #define BUFFER_SIZE 2048
 
+typedef struct shell shell;
+
 
 /**
  * struct command - Struct to store a command name and function pointer
@@ -36,14 +38,14 @@ typedef struct cmd
  * @num_builtins: The number of builtin commands
  * @status: The exit status of the last command executed
  */
-typedef struct shell
+struct shell
 {
 	char *input;
 	char **args;
 	cmd *builtins;
 	int num_builtins;
 	int status;
-} shell;
+};
 
 extern char **environ;
 

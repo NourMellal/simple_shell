@@ -105,3 +105,37 @@ void *_memcpy(void *dest, const void *src, size_t n)
 		*d++ = *s++;
 	return (dest);
 }
+
+/**
+ * _strtok - Tokenizes a string by a given delimiter
+ * @str: The string to be tokenized
+ * @delim: The delimiter used for tokenization
+ *
+ * Return: A pointer to the next token in the string
+ */
+
+char *_strtok(char *str, char *delim)
+{
+	static char *last;
+	char *token;
+
+	if (str != NULL)
+		last = str;
+
+	if (last == NULL || *last == '\0')
+		return (NULL);
+
+	token = last;
+
+	while (*last != '\0')
+	{
+		if (*last == *delim)
+		{
+			*last = '\0';
+			last++;
+			return (token);
+		}
+		last++;
+	}
+	return (token);
+}

@@ -83,16 +83,16 @@ void execute_command(shell *sh)
  * @command: The command to search for
  * Return: A pointer to the full path of the command, or NULL if not found
  */
-char *find_command(char *command)
+char *find_command(char *cmd)
 {
 	char *path = getenv("PATH");
 	char *path_copy = _strdup(path);
 	char *dir = _strtok(path_copy, ":");
-	char *full_path = malloc(_strlen(command) + _strlen(path) + 2);
+	char *full_path = malloc(_strlen(cmd) + _strlen(path) + 2);
 
 	while (dir != NULL)
 	{
-		_sprintf(full_path, "%s/%s", dir, command);
+		_sprintf(full_path, "%s/%s", dir, cmd);
 		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);

@@ -14,7 +14,7 @@ int main(void)
 	while (should_run)
 	{
 		if (isatty(STDIN_FILENO))
-			_printf("myshell> ");
+			_printf("#CisFun> ");
 
 		sh.args = read_input(&sh.input);
 		if (sh.args == NULL)
