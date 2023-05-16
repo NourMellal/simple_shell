@@ -1,21 +1,6 @@
 #include "main.h"
 
 /**
- * str_len - Calculates the length of a string.
- * @s: The input string.
- *
- * Return: The length of the string.
- */
-int _strlen(char *s)
-{
-	int len = 0;
-
-	while (*s++)
-		len++;
-	return (len);
-}
-
-/**
  * str_rev - Reverses a string.
  * @s: The string to be reversed.
  */
@@ -35,7 +20,7 @@ void str_rev(char s[])
 }
 
 /**
- * _stb - Copies a string to a buffer.
+ * _stao - Copies a string to a buffer.
  * @s: The string to be copied.
  * @buf: The destination buffer.
  *
@@ -66,7 +51,7 @@ int _stoa(char *s, char *buf)
  * _strcmp - Compares two strings.
  * @s1: The first string to be compared.
  * @s2: The second string to be compared.
- *
+ * @n: the index.
  * Return: The difference between the first differing characters
  *         (0 if the strings are equal).
  */
