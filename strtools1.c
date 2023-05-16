@@ -53,7 +53,7 @@ int _stoa(char *s, char *buf)
  * @s2: The second string to be compared.
  * @n: the index.
  * Return: The difference between the first differing characters
- *         (0 if the strings are equal).
+ *         (0 if the strings are equal)..
  */
 int _strcmp(const char *s1, const char *s2, size_t n)
 {
