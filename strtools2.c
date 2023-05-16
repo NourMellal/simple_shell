@@ -12,7 +12,7 @@ void write_fd(int fd, char *s)
 	if (!s)
 		s = "(null)";
 
-	length = str_len(s);
+	length = _strlen(s);
 
 	write(fd, s, length);
 }
@@ -27,7 +27,7 @@ char *_strdup(const char *s)
 	int i;
 	char *result;
 
-	result = malloc(sizeof(char) * (str_len((char *)s) + 1));
+	result = malloc(sizeof(char) * (_strlen((char *)s) + 1));
 	if (result == NULL)
 		return (NULL);
 
@@ -51,13 +51,13 @@ ssize_t _getline(char **lineptr, size_t *n, int fd)
 	size_t size = 0;
 	char *line = *lineptr;
 	size_t start = 0, end = 0;
-	static char buffer[BFF_SIZE];
+	static char buffer[BUFFER_SIZE];
 
 	for (;;)
 	{
 		if (start >= end)
 		{
-			ssize_t bytes = read(fd, buffer, BFF_SIZE);
+			ssize_t bytes = read(fd, buffer, BUFFER_SIZE);
 
 			if (bytes <= 0)
 				return (-1);

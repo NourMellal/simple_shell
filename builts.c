@@ -1,27 +1,29 @@
 #include "main.h"
+#include <stdio.h>
 
 /**
- * exit_cmd - Function to handle the 'exit' command.
- * @args: Array of command arguments.
- *
- * Description: This function is responsible for handling the 'exit' command.
- * It performs necessary cleanup or actions before exiting the program with a
- * status code of 0.
+ * cmd_exit - exits the program
+ * @sh: Pointer to the shell structure
  */
-static void exit_cmd(char **args)
+static void cmd_exit(shell *sh)
 {
-	(void)(args);
-	exit(0);
+	int status = 0;
+
+	if (sh->args[1])
+		status = _atoi(sh->args[1]);
+
+	free(sh->input);
+	exit(status);
 }
 
 /**
  * cmd_env - prints the current environment
- * @args: command line arguments
+ * @sh: Pointer to the shell structure
  */
-static void cmd_env(char **args)
+static void cmd_env(shell *sh)
 {
 	unsigned int i;
-	(void)(args);
+	(void)(sh);
 
 	if (!environ)
 	{
@@ -32,27 +34,41 @@ static void cmd_env(char **args)
 		_printf("%s\n", environ[i]);
 }
 
-static cmd builtins[] = {
-	{"exit", exit_cmd},
-};
-
 /**
- * num_built - Get the number of built-in commands.
- *
- * Return: The number of built-in commands in the 'builtins' array.
+ * cmd_cd - Change the current working directory
+ * @sh: Pointer to the shell structure
  */
-int num_built(void)
+static void cmd_cd(shell *sh)
 {
-	return (sizeof(builtins) / sizeof(cmd));
+	char buf[BUFFER_SIZE];
+	char *new_dir, *old_dir;
+
+	old_dir = getcwd(buf, BUFFER_SIZE);
+
+	if (!sh->args[1])
+		new_dir = _getenv("HOME");
+	else if (_strcmp(sh->args[1], "-", -1) == 0)
+	{
+		new_dir = getenv("OLDPWD");
+		_printf("%s\n", new_dir);
+	}
+	else
+		new_dir = sh->args[1];
+
+	if (chdir(new_dir) != 0)
+		perror("cd");
+
+	setenv("OLDPWD", old_dir, 1);
+	setenv("PWD", getcwd(buf, BUFFER_SIZE), 1);
 }
 
-/**
- * get_built - Get the array of built-in commands.
- *
- * Return: Pointer to the 'builtins' array.
- */
-cmd *get_built(void)
-
+cmd *get_builtins(void)
 {
+	static cmd builtins[] = {
+		{"exit", cmd_exit},
+		{"env", cmd_env},
+		{"cd", cmd_cd},
+		{NULL, NULL},
+	};
 	return (builtins);
 }

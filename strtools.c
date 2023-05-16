@@ -6,7 +6,7 @@
  *
  * Return: The length of the string.
  */
-int str_len(char *s)
+int _strlen(char *s)
 {
 	int len = 0;
 
@@ -24,7 +24,7 @@ void str_rev(char s[])
 	char temp;
 	int i = 0, len = 0;
 
-	len = str_len(s);
+	len = _strlen(s);
 
 	for (; i < len / 2; i++)
 	{
@@ -41,7 +41,7 @@ void str_rev(char s[])
  *
  * Return: The length of the copied string.
  */
-int _stb(char *s, char *buf)
+int _stoa(char *s, char *buf)
 {
 	int i = 0;
 	char *p;
@@ -70,13 +70,21 @@ int _stb(char *s, char *buf)
  * Return: The difference between the first differing characters
  *         (0 if the strings are equal).
  */
-int _strcmp(const char *s1, const char *s2)
+int _strcmp(const char *s1, const char *s2, size_t n)
 {
+	if (n == 0)
+		return (0);
+
 	while (*s1 && (*s1 == *s2))
 	{
 		s1++;
 		s2++;
+		n--;
 	}
+
+	if (n == 0)
+		return (0);
+
 	return (*(const unsigned char *)s1 - *(const unsigned char *)s2);
 }
 
