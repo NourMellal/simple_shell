@@ -55,8 +55,6 @@ int _strcmp(const char *s1, const char *s2, size_t n);
 void *_memcpy(void *dest, const void *src, size_t n);
 char *_strdup(const char *s);
 char *_strtok(char *str, char *delim);
-ssize_t _getline(char **lineptr, size_t *n, int fd);
-
 
 /* main */
 void init_builtins(shell *sh);
