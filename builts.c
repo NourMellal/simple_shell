@@ -73,11 +73,3 @@ cmd *get_builtins(void)
 	return (builtins);
 }
 
-
-/* builtins functions*/
-cmd *get_built(void);
-int num_built(void);
-static void cmd_exit(shell *sh);
-static void cmd_env(shell *sh);
-static void cmd_cd(shell *sh);
-cmd *get_builtins(void);
