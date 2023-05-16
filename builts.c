@@ -81,7 +81,3 @@ static void cmd_exit(shell *sh);
 static void cmd_env(shell *sh);
 static void cmd_cd(shell *sh);
 cmd *get_builtins(void);
-
-/* system tools*/
-char *_getenv(const char *name);
-ssize_t _getline(char **lineptr, size_t *n, int fd);
