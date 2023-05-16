@@ -14,6 +14,23 @@ static void exit_cmd(char **args)
 	exit(0);
 }
 
+/**
+ * cmd_env - prints the current environment
+ * @args: command line arguments
+ */
+static void cmd_env(char **args)
+{
+	unsigned int i;
+	(void)(args);
+
+	if (!environ)
+	{
+		_fprintf(STDERR_FILENO, "Error: environ is NULL\n");
+		return;
+	}
+	for (i = 0; environ[i]; i++)
+		_printf("%s\n", environ[i]);
+}
 
 static cmd builtins[] = {
 	{"exit", exit_cmd},
@@ -35,6 +52,7 @@ int num_built(void)
  * Return: Pointer to the 'builtins' array.
  */
 cmd *get_built(void)
+
 {
 	return (builtins);
 }

@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdarg.h>
 
 /**
  * _vsprintf - Writes a formatted string to a buffer
@@ -31,7 +30,7 @@ void _vsprintf(char *str, const char *fmt, va_list ap)
 				str += _itoa(va_arg(ap, size_t), str, 16, 0);
 			}
 			else if (c == 's')
-				str += _stb(va_arg(ap, char *), str);
+				str += _stoa(va_arg(ap, char *), str);
 			else if (c == 'c')
 				*str++ = va_arg(ap, int);
 			else if (c == '%')
@@ -67,12 +66,12 @@ void _sprintf(char *str, const char *fmt, ...)
  */
 void _fprintf(int fd, const char *fmt, ...)
 {
-	char buf[1024];
+	char buf[BUFFER_SIZE];
 	va_list ap;
 
 	va_start(ap, fmt);
 	_vsprintf(buf, fmt, ap);
-	write(fd, buf, str_len(buf));
+	write(fd, buf, _strlen(buf));
 	va_end(ap);
 }
 
@@ -84,10 +83,10 @@ void _fprintf(int fd, const char *fmt, ...)
 void _printf(const char *fmt, ...)
 {
 	va_list ap;
-	char buf[1024];
+	char buf[BUFFER_SIZE];
 
 	va_start(ap, fmt);
 	_vsprintf(buf, fmt, ap);
-	write(1, buf, str_len(buf));
+	write(1, buf, _strlen(buf));
 	va_end(ap);
 }
