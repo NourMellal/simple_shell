@@ -51,7 +51,7 @@ shell
 
 ## Contributing
 
-Please follow the [contributing guidelines](CONTRIBUTING.md) to contribute to this project.
+Please follow the [contributing guidelines](README.md) to contribute to this project.
 
 ## License
 
