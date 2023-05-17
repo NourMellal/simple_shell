@@ -72,4 +72,3 @@ cmd *get_builtins(void)
 	};
 	return (builtins);
 }
-
