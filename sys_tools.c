@@ -69,3 +69,40 @@ char *_getenv(const char *name)
 
 	return (NULL);
 }
+/**
+ * copy_environ - Copy the environment variables
+ * Return: Pointer to the new environ array, or NULL if fails
+ */
+char **copy_environ(void)
+{
+    int i, count;
+    char **new_environ;
+
+    /* Count the number of environment variables */
+    for (count = 0; environ[count] != NULL; count++)
+        ;
+
+    /* Allocate memory for the new environ array */
+    new_environ = malloc((count + 1) * sizeof(char *));
+    if (!new_environ)
+        return (NULL);
+
+    /* Copy the environment variables */
+    for (i = 0; i < count; i++)
+    {
+        new_environ[i] = _strdup(environ[i]);
+        if (new_environ[i] == NULL)
+        {
+            /* Free any previously allocated memory in case of failure */
+            while (i--)
+                free(new_environ[i]);
+            free(new_environ);
+            return (NULL);
+        }
+    }
+
+    /* Set the last element to NULL */
+    new_environ[count] = NULL;
+
+    return (new_environ);
+}

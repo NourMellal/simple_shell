@@ -92,7 +92,13 @@ static void cmd_cd(shell *sh);
 cmd *get_builtins(void);
 
 /* system tools*/
-char *_getenv(const char *name);
 ssize_t _getline(char **lineptr, size_t *n, int fd);
+char *_getenv(const char *name);
+char **copy_environ(void);
+
+/* builtins */
+
+void cmd_setenv(shell *sh);
+void cmd_unsetenv(shell *sh);
 
 #endif
