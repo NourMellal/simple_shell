@@ -12,7 +12,7 @@ static void cmd_exit(shell *sh)
     if (sh->args[1])
         status = _atoi(sh->args[1]);
 
-    free(sh->input);
+    free_shell(sh);
     exit(status);
 }
 

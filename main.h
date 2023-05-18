@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <signal.h>
 
 #define BUFFER_SIZE 2048
 
@@ -20,7 +21,7 @@ typedef struct shell shell;
 
 
 /**
- * struct command - Struct to store a command name and function pointer
+ * struct cmd - Struct to store a command name and function pointer
  * @name: Pointer to the command name string
  * @func: Pointer to the function associated with the command
  */
@@ -37,6 +38,7 @@ typedef struct cmd
  * @builtins: A pointer to an array of containing about the builtin commands
  * @num_builtins: The number of builtin commands
  * @status: The exit status of the last command executed
+ * @environ_copy: An array of strings containing a copy of the environ.
  */
 struct shell
 {
@@ -45,7 +47,9 @@ struct shell
 	cmd *builtins;
 	int num_builtins;
 	int status;
+	char **environ_copy;
 };
+
 extern char **environ;
 
 /* string_tools */
@@ -59,6 +63,7 @@ char *_strtok(char *str, char *delim);
 
 /* main */
 void init_builtins(shell *sh);
+void free_shell(shell *sh);
 
 
 /* Sprintf */
@@ -94,11 +99,13 @@ cmd *get_builtins(void);
 /* system tools*/
 ssize_t _getline(char **lineptr, size_t *n, int fd);
 char *_getenv(const char *name);
-char **copy_environ(void);
+void copy_environ(shell *sh);
 
 /* builtins */
 
 void cmd_setenv(shell *sh);
 void cmd_unsetenv(shell *sh);
+
+void handle_ctrlc(int n);
 
 #endif

@@ -61,17 +61,3 @@ static void cmd_cd(shell *sh)
     setenv("OLDPWD", old_dir, 1);
     setenv("PWD", getcwd(buf, BUFFER_SIZE), 1);
 }
-
-
-cmd *get_builtins(void)
-{
-    static cmd builtins[] = {
-        {"exit", cmd_exit},
-        {"env", cmd_env},
-        {"cd", cmd_cd},
-        {"setenv", cmd_setenv},
-        {"unsetenv", cmd_unsetenv},
-        {NULL, NULL},
-    };
-    return (builtins);
-}

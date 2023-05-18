@@ -71,38 +71,38 @@ char *_getenv(const char *name)
 }
 /**
  * copy_environ - Copy the environment variables
- * Return: Pointer to the new environ array, or NULL if fails
+ * @sh: pointer to the shell structure
  */
-char **copy_environ(void)
+void copy_environ(shell *sh)
 {
-    int i, count;
-    char **new_environ;
+	size_t env_count = 0;
+	size_t new_size;
+	char **env_ptr;
 
-    /* Count the number of environment variables */
-    for (count = 0; environ[count] != NULL; count++)
-        ;
+	/* Count the number of environment variables */
+	for (env_ptr = environ; *env_ptr; env_ptr++)
+		env_count++;
 
-    /* Allocate memory for the new environ array */
-    new_environ = malloc((count + 1) * sizeof(char *));
-    if (!new_environ)
-        return (NULL);
+	new_size = (env_count + 1) * sizeof(char *);
+	sh->environ_copy = malloc(new_size);
 
-    /* Copy the environment variables */
-    for (i = 0; i < count; i++)
-    {
-        new_environ[i] = _strdup(environ[i]);
-        if (new_environ[i] == NULL)
-        {
-            /* Free any previously allocated memory in case of failure */
-            while (i--)
-                free(new_environ[i]);
-            free(new_environ);
-            return (NULL);
-        }
-    }
+	if (sh->environ_copy == NULL)
+	{
+		_fprintf(STDERR_FILENO, "Failed to allocate memory\n");
+		return;
+	}
 
-    /* Set the last element to NULL */
-    new_environ[count] = NULL;
+	/* Copy the environment variables */
+	for (env_count = 0; environ[env_count]; env_count++)
+	{
+		sh->environ_copy[env_count] = _strdup(environ[env_count]);
+		if (sh->environ_copy[env_count] == NULL)
+		{
+			_fprintf(STDERR_FILENO, "Failed to allocate memory\n");
+			return;
+		}
+	}
 
-    return (new_environ);
+	/* Set the last element of the array to NULL */
+	sh->environ_copy[env_count] = NULL;
 }
