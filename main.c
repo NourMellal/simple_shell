@@ -6,23 +6,16 @@
  */
 int main(void)
 {
-	int should_run = 1;
 	shell sh = {NULL};
 
-	init_builtins(&sh);
+	init_shell(&sh);
 
-	while (should_run)
+	while (sh.run)
 	{
 		if (isatty(STDIN_FILENO))
 			_printf("myshell> ");
 
-		sh.args = read_input(&sh.input);
-		if (sh.args == NULL)
-			break;
-
 		execute_command(&sh);
-
-		free(sh.input);
 	}
 
 	free_shell(&sh);
@@ -30,17 +23,20 @@ int main(void)
 }
 
 /**
- * init_builtins - Initialize the built-in commands for a shell
+ * init_shell - Initialize the shell struct
  * @sh: Pointer to the shell structure
  */
-void init_builtins(shell *sh)
+void init_shell(shell *sh)
 {
 	cmd *builtins = get_builtins();
 
 	sh->builtins = builtins;
 	sh->num_builtins = 0;
+	sh->cmd_count = 0;
+	sh->status = 0;
+	sh->run = 1;
+	copy_environ(sh);
 
-	/* calculate the number of built-in commands */
 	while (builtins[sh->num_builtins].name)
 		sh->num_builtins++;
 }
@@ -51,17 +47,10 @@ void init_builtins(shell *sh)
  */
 void free_shell(shell *sh)
 {
-	size_t i;
-
-	/* Free the memory allocated for the input member */
-	if (sh->input != NULL)
-		free(sh->input);
+	if (sh->input)
+		free_double(&sh->input);
 
 	/* Free the memory allocated for the environ_copy member */
-	if (sh->environ_copy != NULL)
-	{
-		for (i = 0; sh->environ_copy[i] != NULL; i++)
-			free(sh->environ_copy[i]);
-		free(sh->environ_copy);
-	}
+	if (sh->environ_copy)
+		free_double(&sh->environ_copy);
 }

@@ -1,20 +1,14 @@
 #include "main.h"
 
 /**
- * write_fd - Writes a string to a file descriptor
+ * write_str - Writes a string to a file descriptor
  * @fd: The file descriptor to write to
  * @s: The string to write
  */
-void write_fd(int fd, char *s)
+void write_str(int fd, char *s)
 {
-	int length = 0;
-
-	if (!s)
-		s = "(null)";
-
-	length = _strlen(s);
-
-	write(fd, s, length);
+	(!s) && (s = "(null)");
+	write(fd, s, _strlen(s));
 }
 
 /**
@@ -40,16 +34,49 @@ char *_strdup(const char *s)
 }
 
 /**
- * _strlen - length of a given string
- * @s: the string
- * Return: the length of given string
+ * _strtok - Tokenizes a string by a given delimiter
+ * @str: The string to be tokenized
+ * @delim: The delimiter used for tokenization
+ * Return: A pointer to the next token in the string
  */
-int _strlen(char *s)
+char *_strtok(char *str, char *delim)
 {
-	int len = 0;
+	int i;
+	char *curr;
+	static char *next;
 
-	while (s[len])
-		len++;
+	(str) ? (curr = str) : (curr = next);
 
-	return (len);
+	if (!curr)
+		return (NULL);
+	/* Skip leading delimiters */
+	while (*curr)
+	{
+		for (i = 0; delim[i]; i++)
+			if (*curr == delim[i])
+				break;
+
+		if (!delim[i])
+			break;
+		curr++;
+	}
+	if (!*curr)
+		return (NULL);
+	/* Find the end of the token */
+	next = curr;
+	while (*next)
+	{
+		for (i = 0; delim[i]; i++)
+			if (*next == delim[i])
+				break;
+		if (delim[i])
+			break;
+		next++;
+	}
+	if (*next)
+	{
+		*next = '\0';
+		next++;
+	}
+	return (curr);
 }

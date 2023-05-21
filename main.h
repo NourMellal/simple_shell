@@ -33,36 +33,42 @@ typedef struct cmd
 
 /**
  * struct shell - Struct contains information about the shell environment
- * @input: A pointer to a string containing the user's input
- * @args: An array of strings containing the arguments from the user's input
+ * @input: An array of strings containing commands from the user input
+ * @args: An array of strings containing arguments from the user input
+ * @environ_copy: An array of strings containing a copy of the environ
  * @builtins: A pointer to an array of containing about the builtin commands
- * @num_builtins: The number of builtin commands
+ * @num_builtins: The count of builtin commands
+ * @cmd_count: The count of commands in the user input
  * @status: The exit status of the last command executed
- * @environ_copy: An array of strings containing a copy of the environ.
+ * @run: A boolean whether or not the shell should continue running
  */
 struct shell
 {
-	char *input;
+	char **input;
 	char **args;
+	char **environ_copy;
 	cmd *builtins;
 	int num_builtins;
+	int cmd_count;
 	int status;
-	char **environ_copy;
+	int run;
 };
+
 
 extern char **environ;
 
 /* string_tools */
 int _strlen(char *s);
-void str_rev(char s[]);
+void reverse_str(char s[]);
 int _stoa(char *s, char *buf);
 int _strcmp(const char *s1, const char *s2, size_t n);
 void *_memcpy(void *dest, const void *src, size_t n);
 char *_strdup(const char *s);
 char *_strtok(char *str, char *delim);
 
+
 /* main */
-void init_builtins(shell *sh);
+void init_shell(shell *sh);
 void free_shell(shell *sh);
 
 
@@ -81,11 +87,13 @@ void external_command(shell *sh);
 /* num_tools */
 int _atoi(const char *str);
 int _itoa(long n, char s[], int base, int sign);
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+void *_realloc(void *ptr, ssize_t old_size, ssize_t new_size);
+void free_double(char ***ptr);
+
 
 /* input*/
-char **read_input(char **input);
-char *read_line(void);
+void read_input(shell *sh);
+void parse_command(shell *sh, char *cmd);
 
 
 /* builtins functions*/
@@ -105,7 +113,6 @@ void copy_environ(shell *sh);
 
 void cmd_setenv(shell *sh);
 void cmd_unsetenv(shell *sh);
-
-void handle_ctrlc(int n);
+cmd *get_builtins(void);
 
 #endif

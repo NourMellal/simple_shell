@@ -1,12 +1,11 @@
 #include "main.h"
 
-#define MAX_ARGS 128
-
 /**
  * read_line - reads a line from stdin
  * Return: pointer to the line read, or NULL if EOF is reached
+ * @sh: Pointer to the shell structure
  */
-char *read_line(void)
+char *read_line(shell *sh)
 {
 	char *line = NULL;
 	size_t len = 0;
@@ -16,6 +15,7 @@ char *read_line(void)
 
 	if (nread == -1)
 	{
+		sh->run = 0;
 		free(line);
 		return (NULL);
 	}
@@ -26,42 +26,76 @@ char *read_line(void)
 	return (line);
 }
 
+/**
+ * read_input - Reads input from the user and stores it in a shell struct
+ * @sh: Pointer to the shell structure
+ */
+void read_input(shell *sh)
+{
+	char *cmd;
+	size_t old_size, new_size;
+
+	while ((cmd = read_line(sh)) != NULL)
+	{
+		old_size = sizeof(char *) * (sh->cmd_count + 1);
+		new_size = sizeof(char *) * (sh->cmd_count + 2);
+
+		sh->input = _realloc(sh->input, old_size, new_size);
+		sh->input[sh->cmd_count] = cmd;
+		sh->input[sh->cmd_count + 1] = NULL;
+		sh->cmd_count++;
+
+		if (isatty(STDIN_FILENO))
+			break;
+	}
+}
 
 /**
- * read_input - reads input from the user and stores it in an array of strings
- * @input: pointer to a string that will be used to store the user's input
- * Return: pointer to an array of strings containing the user's input
+ * parse_command - Parses a command string into an array of arguments
+ * @sh: Pointer to the shell structure
+ * @cmd: The command string to be parsed
+ * Return: Pointer to the array of arguments, or NULL if command is empty
  */
-
-char **read_input(char **input)
+void parse_command(shell *sh, char *cmd)
 {
 	int i = 0;
-	char *cmd;
-	static char *args[MAX_ARGS];
+	char *start, *end;
+	char **args = malloc(10 * sizeof(char *));
 
-	*input = read_line();
-	if (*input == NULL)
-		return (NULL);
-
-	cmd = *input;
-	/* Ignore leading space characters */
-	while (*cmd == ' ' || *cmd == '\t')
-		cmd++;
-
+	if (!args)
+	{
+		_fprintf(STDERR_FILENO, "Error: memory allocation failed\n");
+		exit(EXIT_FAILURE);
+	}
+	if (!cmd)
+	{
+		sh->args = args;
+		return;
+	}
+	/* Trim the start of the command */
+	start = cmd;
+	while (*start == ' ' || *start == '\t')
+		start++;
+	/* Trim the end of the command */
+	end = start + _strlen(start) - 1;
+	while (end > start && (*end == ' ' || *end == '\t'))
+		end--;
 	/* Check if the command is empty */
-	if (*cmd == '\0')
-		return (NULL);
-
+	if (start >= end)
+	{
+		sh->args = args;
+		return;
+	}
 	args[i] = _strtok(cmd, " ");
 	while (args[i])
 	{
 		i++;
-		if (i >= MAX_ARGS)
+		if (i >= 10)
 		{
 			_fprintf(STDERR_FILENO, "Error: too many arguments\n");
 			exit(EXIT_FAILURE);
 		}
 		args[i] = _strtok(NULL, " ");
 	}
-	return (args);
+	sh->args = args;
 }

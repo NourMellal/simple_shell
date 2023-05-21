@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stdio.h>
 
 /**
  * _getline - reads a line from a file descriptor
@@ -9,28 +10,31 @@
  */
 ssize_t _getline(char **lineptr, size_t *n, int fd)
 {
-	size_t size = 0;
-	char *line = *lineptr;
-	size_t start = 0, end = 0;
 	static char buffer[BUFFER_SIZE];
+	static size_t start, end;
+	char *line = *lineptr, *tmp, c;
+	ssize_t bytes, size = 0;
 
 	for (;;)
 	{
 		if (start >= end)
 		{
-			ssize_t bytes = read(fd, buffer, BUFFER_SIZE);
-
-			if (bytes <= 0)
+			bytes = read(fd, buffer, BUFFER_SIZE);
+			if (bytes == -1)
+			{
+				perror("read");
+				return (-1);
+			}
+			if (bytes == 0)
 				return (-1);
 			start = 0;
 			end = bytes;
 		}
 		while (start < end)
 		{
-			char c = buffer[start++];
-			char *tmp = _realloc(line, size, size + 2);
-
-			if (tmp == NULL)
+			c = buffer[start++];
+			tmp = _realloc(line, size, size + 2);
+			if (!tmp)
 			{
 				free(line);
 				return (-1);
@@ -69,6 +73,7 @@ char *_getenv(const char *name)
 
 	return (NULL);
 }
+
 /**
  * copy_environ - Copy the environment variables
  * @sh: pointer to the shell structure

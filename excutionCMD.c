@@ -43,7 +43,7 @@ void external_command(shell *sh)
 		pid = fork();
 		if (pid == 0)
 		{
-			ret = execve(full_path, sh->args, NULL);
+			ret = execve(full_path, sh->args, sh->environ_copy);
 			if (ret == -1)
 				perror(sh->args[0]);
 			_exit(ret);
@@ -65,42 +65,30 @@ void external_command(shell *sh)
 
 /**
  * execute_command - Executes a command
- * @sh: Pointer to the shell structure.
+ * @sh: Pointer to the shell structure
  */
 void execute_command(shell *sh)
 {
-	int i;
+	int i, j;
 
-	i = builtin_command(sh);
+	read_input(sh);
+	if (!sh->input)
+		return;
 
-	/* If it's not a builtin command */
-	if (i == sh->num_builtins)
-		external_command(sh);
-}
-/**
- * find_command - Finds the full path of a command in the PATH environment
- * @command: The command to search for
- * Return: A pointer to the full path of the command, or NULL if not found
- */
-char *find_command(char *cmd)
-{
-	char *path = _getenv("PATH");
-	char *path_copy = _strdup(path);
-	char *dir = _strtok(path_copy, ":");
-	char *full_path = malloc(_strlen(cmd) + _strlen(path) + 2);
-
-	while (dir != NULL)
+	for (i = 0; i < sh->cmd_count; i++)
 	{
-		_sprintf(full_path, "%s/%s", dir, cmd);
-		if (access(full_path, X_OK) == 0)
-		{
-			free(path_copy);
-			return (full_path);
-		}
-		dir = _strtok(NULL, ":");
-	}
+		/* Parse the command and its arguments */
+		parse_command(sh, sh->input[i]);
 
-	free(path_copy);
-	free(full_path);
-	return (NULL);
+		j = builtin_command(sh);
+		if (j == sh->num_builtins)
+			external_command(sh);
+	}
+	sh->cmd_count = 0;
+
+	free(sh->args);
+	sh->args = NULL;
+
+	if (sh->input)
+		free_double(&sh->input);
 }

@@ -83,6 +83,7 @@ void _fprintf(int fd, const char *fmt, ...)
 void _printf(const char *fmt, ...)
 {
 	va_list ap;
+	/* TODO: allocate buf dynamically */
 	char buf[BUFFER_SIZE];
 
 	va_start(ap, fmt);

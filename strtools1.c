@@ -1,13 +1,28 @@
 #include "main.h"
 
 /**
- * str_rev - Reverses a string.
- * @s: The string to be reversed.
+ * _strlen - length of a given string
+ * @s: the string
+ * Return: the length of given string
  */
-void str_rev(char s[])
+int _strlen(char *s)
+{
+	int len = 0;
+
+	while (s[len])
+		len++;
+
+	return (len);
+}
+
+/**
+ * reverse_str - reverses a given string
+ * @s: the string to be reversed
+ */
+void reverse_str(char s[])
 {
 	char temp;
-	int i = 0, len = 0;
+	unsigned int i = 0, len = 0;
 
 	len = _strlen(s);
 
@@ -20,47 +35,34 @@ void str_rev(char s[])
 }
 
 /**
- * _stao - Copies a string to a buffer.
- * @s: The string to be copied.
- * @buf: The destination buffer.
- *
- * Return: The length of the copied string.
+ * _stoa - copies a string to a buffer
+ * @s: the string to copy
+ * @buf: the buffer to copy to
+ * Return: the length of the copied string
  */
 int _stoa(char *s, char *buf)
 {
 	int i = 0;
-	char *p;
-
-	if (s == NULL)
-		p = "(null)";
-
-	else
-		p = s;
+	char *p = (!s) ? "(null)" : s;
 
 	while (*p)
-	{
-		buf[i] = *p;
-		i++;
-		p++;
-	}
-
+		buf[i++] = *p++;
 	return (i);
 }
 
 /**
- * _strcmp - Compares two strings.
- * @s1: The first string to be compared.
- * @s2: The second string to be compared.
- * @n: the index.
- * Return: The difference between the first differing characters
- *         (0 if the strings are equal)..
+ * _strcmp - compares two strings
+ * @s1: first string to compare
+ * @s2: second string to compare
+ * @n: index of characters to compare
+ * Return: difference between the two strings
  */
 int _strcmp(const char *s1, const char *s2, size_t n)
 {
 	if (n == 0)
 		return (0);
 
-	while (*s1 && (*s1 == *s2))
+	while (n && *s1 && (*s1 == *s2))
 	{
 		s1++;
 		s2++;
@@ -74,12 +76,11 @@ int _strcmp(const char *s1, const char *s2, size_t n)
 }
 
 /**
- * _memcpy - Copies a memory block from source to destination.
- * @dest: The destination memory block.
- * @src: The source memory block.
- * @n: The number of bytes to copy.
- *
- * Return: A pointer to the destination memory block.
+ * _memcpy - Copies memory from one location to another
+ * @dest: A pointer to the destination memory
+ * @src: A pointer to the source memory
+ * @n: The number of bytes to copy
+ * Return: A pointer to the destination memory
  */
 void *_memcpy(void *dest, const void *src, size_t n)
 {
@@ -89,38 +90,4 @@ void *_memcpy(void *dest, const void *src, size_t n)
 	while (n--)
 		*d++ = *s++;
 	return (dest);
-}
-
-/**
- * _strtok - Tokenizes a string by a given delimiter
- * @str: The string to be tokenized
- * @delim: The delimiter used for tokenization
- *
- * Return: A pointer to the next token in the string
- */
-
-char *_strtok(char *str, char *delim)
-{
-	static char *last;
-	char *token;
-
-	if (str != NULL)
-		last = str;
-
-	if (last == NULL || *last == '\0')
-		return (NULL);
-
-	token = last;
-
-	while (*last != '\0')
-	{
-		if (*last == *delim)
-		{
-			*last = '\0';
-			last++;
-			return (token);
-		}
-		last++;
-	}
-	return (token);
 }
