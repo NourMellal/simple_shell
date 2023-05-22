@@ -13,7 +13,7 @@ int main(void)
 	while (sh.run)
 	{
 		if (isatty(STDIN_FILENO))
-			_printf("myshell> ");
+			_printf("> ");
 
 		execute_command(&sh);
 	}
