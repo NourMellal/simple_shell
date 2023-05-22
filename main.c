@@ -39,6 +39,9 @@ void init_shell(shell *sh)
 
 	while (builtins[sh->num_builtins].name)
 		sh->num_builtins++;
+
+	sh->aliases->name = NULL;
+	sh->aliases->value = NULL;
 }
 
 /**
@@ -47,10 +50,23 @@ void init_shell(shell *sh)
  */
 void free_shell(shell *sh)
 {
+	int i;
+
 	if (sh->input)
 		free_double(&sh->input);
 
-	/* Free the memory allocated for the environ_copy member */
+	if (sh->args)
+		free(sh->args);
+
 	if (sh->environ_copy)
 		free_double(&sh->environ_copy);
+
+	for (i = 0; sh->aliases[i].name; i++)
+	{
+		_printf("%d", sh->aliases[i].name);
+		if (sh->aliases[i].name)
+			free(sh->aliases[i].name);
+		if (sh->aliases[i].value)
+			free(sh->aliases[i].value);
+	}
 }

@@ -1,5 +1,9 @@
 #include "main.h"
 
+#define MAX_ARGS 10
+
+void process_variables(shell *sh, char **args);
+
 /**
  * read_line - reads a line from stdin
  * Return: pointer to the line read, or NULL if EOF is reached
@@ -59,8 +63,8 @@ void read_input(shell *sh)
 void parse_command(shell *sh, char *cmd)
 {
 	int i = 0;
-	char *start, *end;
-	char **args = malloc(10 * sizeof(char *));
+	char **args = malloc(MAX_ARGS * sizeof(char *));
+	char *arg, *start, *end;
 
 	if (!args)
 	{
@@ -72,30 +76,63 @@ void parse_command(shell *sh, char *cmd)
 		sh->args = args;
 		return;
 	}
-	/* Trim the start of the command */
-	start = cmd;
-	while (*start == ' ' || *start == '\t')
-		start++;
-	/* Trim the end of the command */
-	end = start + _strlen(start) - 1;
-	while (end > start && (*end == ' ' || *end == '\t'))
-		end--;
-	/* Check if the command is empty */
-	if (start >= end)
+	arg = _strtok(cmd, " ");
+	while (arg)
 	{
-		sh->args = args;
-		return;
-	}
-	args[i] = _strtok(cmd, " ");
-	while (args[i])
-	{
+		/* Remove double quotes */
+		start = arg;
+		end = start + _strlen(start) - 1;
+		if (start[0] == '"' && end[0] == '"')
+		{
+			end[0] = '\0';
+			start++;
+		}
+
+		args[i] = start;
 		i++;
-		if (i >= 10)
+		if (i >= MAX_ARGS)
 		{
 			_fprintf(STDERR_FILENO, "Error: too many arguments\n");
 			exit(EXIT_FAILURE);
 		}
-		args[i] = _strtok(NULL, " ");
+		arg = _strtok(NULL, " ");
 	}
+	args[i] = NULL;
+	process_variables(sh, args);
 	sh->args = args;
+}
+
+/**
+ * process_variables - Processes variables in the shell
+ * @sh: Pointer to the shell structure
+ * @args: Array of arguments
+ */
+void process_variables(shell *sh, char **args)
+{
+	int i = 0;
+	char *arg_value;
+	static char status_str[12], pid_str[12];
+
+	for (; args[i]; i++)
+	{
+		if (args[i][0] != '$')
+			continue;
+
+		if (_strcmp(args[i], "$?", -1) == 0)
+		{
+			_sprintf(status_str, "%d", sh->status);
+			args[i] = status_str;
+		}
+		else if (_strcmp(args[i], "$$", -1) == 0)
+		{
+			_sprintf(pid_str, "%d", getpid());
+			args[i] = pid_str;
+		}
+		else
+		{
+			arg_value = _getenv(args[i] + 1);
+			if (arg_value)
+				args[i] = arg_value;
+		}
+	}
 }

@@ -60,7 +60,10 @@ void external_command(shell *sh)
 			free(full_path);
 	}
 	else
+	{
 		_fprintf(STDERR_FILENO, "%s: command not found\n", sh->args[0]);
+		sh->status = 127;
+	}	
 }
 
 /**
@@ -70,24 +73,42 @@ void external_command(shell *sh)
 void execute_command(shell *sh)
 {
 	int i, j;
+	char *cmd_sep = ";", *saveptr, *cmd;
+	char *alias_value;
 
 	read_input(sh);
 	if (!sh->input)
 		return;
-
 	for (i = 0; i < sh->cmd_count; i++)
 	{
-		/* Parse the command and its arguments */
-		parse_command(sh, sh->input[i]);
+		cmd = _strtok_r(sh->input[i], cmd_sep, &saveptr);
+		while (cmd != NULL)
+		{
+			/* Parse the command and its arguments */
+			parse_command(sh, cmd);
+			j = builtin_command(sh);
+			if (j == sh->num_builtins)
+			{
+				/* TODO: add aliases contain also args */
+				alias_value = get_alias_value(sh, sh->args[0]);
+				if (alias_value)
+					sh->args[0] = alias_value;
 
-		j = builtin_command(sh);
-		if (j == sh->num_builtins)
-			external_command(sh);
+				external_command(sh);
+			}
+			cmd = _strtok_r(NULL, cmd_sep, &saveptr);
+
+			free(sh->args);
+			sh->args = NULL;
+		}
 	}
 	sh->cmd_count = 0;
 
-	free(sh->args);
-	sh->args = NULL;
+	if (sh->args)
+	{
+		free(sh->args);
+		sh->args = NULL;
+	}
 
 	if (sh->input)
 		free_double(&sh->input);
