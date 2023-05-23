@@ -93,7 +93,7 @@ void parse_command(shell *sh, char *cmd)
 		sh->args = args;
 		return;
 	}
-	arg = _strtok(cmd, " ");
+	arg = _strtok(cmd, " \t");
 	while (arg)
 	{
 		/* Check for comment */
@@ -111,7 +111,7 @@ void parse_command(shell *sh, char *cmd)
 			_fprintf(STDERR_FILENO, "Error: too many arguments\n");
 			exit(EXIT_FAILURE);
 		}
-		arg = _strtok(NULL, " ");
+		arg = _strtok(NULL, " \t");
 	}
 	args[i] = NULL;
 	process_variables(sh, args);
