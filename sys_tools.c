@@ -2,52 +2,52 @@
 #include <stdio.h>
 
 /**
- * _getline - reads a line from a file descriptor
+ * _getline - reads a line from a file descriptor (EOF)
  * @lineptr: pointer to the buffer where the line is stored
  * @n: size of the buffer
  * @fd: file descriptor
- * Return: number of bytes read, or -1 on failure
+ * Return: number of sceid read, or -1 on failure
  */
 ssize_t _getline(char **lineptr, size_t *n, int fd)
 {
 	static char buffer[BUFFER_SIZE];
 	static size_t start, end;
-	char *line = *lineptr, *tmp, c;
-	ssize_t bytes, size = 0;
+	char *line = *lineptr;
+	ssize_t bytes, size = 0, sceid;
 
 	for (;;)
 	{
 		if (start >= end)
 		{
 			bytes = read(fd, buffer, BUFFER_SIZE);
-			if (bytes == -1)
+			if (bytes <= 0 && size > 0 && line[size - 1] != '\n')
 			{
-				perror("read");
-				return (-1);
+				line = _realloc(line, size, size + 2);
+				if (!line)
+					return (-1);
+				line[size++] = '\n';
 			}
-			if (bytes == 0)
+			else if (bytes <= 0)
 				return (-1);
 			start = 0;
 			end = bytes;
 		}
 		while (start < end)
 		{
-			c = buffer[start++];
-			tmp = _realloc(line, size, size + 2);
-			if (!tmp)
-			{
-				free(line);
+			sceid = buffer[start++];
+			line = _realloc(line, size, size + 2);
+			if (!line)
 				return (-1);
-			}
-			line = tmp;
-			line[size++] = c;
-			if (c == '\n')
-			{
-				line[size] = '\0';
-				*lineptr = line;
-				*n = size;
-				return (size);
-			}
+			line[size++] = sceid;
+			if (sceid == '\n')
+				break;
+		}
+		if (sceid == '\n' || bytes <= 0)
+		{
+			line[size] = '\0';
+			*lineptr = line;
+			*n = size;
+			return (size);
 		}
 	}
 }
