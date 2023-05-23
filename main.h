@@ -59,7 +59,7 @@ typedef struct alias
  * @run: A boolean whether or not the shell should continue running
  * @aliases: An array of alias structures containing user-defined aliases
  * @argc: args count
- * @argv: arguments 
+ * @argv: arguments
  */
 
 struct shell
@@ -125,11 +125,6 @@ void parse_command(shell *sh, char *cmd);
 /* builtins functions*/
 cmd *get_built(void);
 int num_built(void);
-/*
-static void cmd_exit(shell *sh);
-static void cmd_env(shell *sh);
-static void cmd_cd(shell *sh);
-*/
 cmd *get_builtins(void);
 char *get_alias_value(shell *sh, char *name);
 void cmd_alias(shell *sh);
