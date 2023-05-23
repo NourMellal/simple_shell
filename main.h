@@ -105,6 +105,7 @@ void execute_command(shell *sh);
 char *find_command(char *command);
 int builtin_command(shell *sh);
 void external_command(shell *sh);
+void process_command(shell *sh);
 
 
 /* num_tools */

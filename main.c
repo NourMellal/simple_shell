@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 		if (sh.interactive)
 			_printf("myshell> ");
 
-		execute_command(&sh);
+		process_command(&sh);
 	}
 
 	free_shell(&sh);

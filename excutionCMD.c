@@ -63,7 +63,7 @@ void external_command(shell *sh)
 	{
 		_fprintf(STDERR_FILENO, "%s: command not found\n", sh->args[0]);
 		sh->status = 127;
-	}	
+	}
 }
 
 /**
@@ -72,44 +72,51 @@ void external_command(shell *sh)
  */
 void execute_command(shell *sh)
 {
-	int i, j;
-	char *cmd_sep = ";", *saveptr, *cmd;
+	int j;
 	char *alias_value;
+
+	j = builtin_command(sh);
+	if (j == sh->num_builtins)
+	{
+		/* TODO: add aliases contain also args */
+		alias_value = get_alias_value(sh, sh->args[0]);
+		if (alias_value)
+			sh->args[0] = alias_value;
+
+		external_command(sh);
+	}
+
+	free(sh->args);
+	sh->args = NULL;
+}
+
+/**
+ * process_command - Reads input, parses it, and executes the cmd
+ * @sh: Pointer to the shell structure
+ * NOTE: '&&' still doesn't handle failed cmd
+ */
+void process_command(shell *sh)
+{
+	int i;
+	char *oprs = ";|&", *saveptr, *cmd;
 
 	read_input(sh);
 	if (!sh->input)
 		return;
+
 	for (i = 0; i < sh->cmd_count; i++)
 	{
-		cmd = _strtok_r(sh->input[i], cmd_sep, &saveptr);
+		cmd = _strtok_r(sh->input[i], oprs, &saveptr);
 		while (cmd != NULL)
 		{
 			/* Parse the command and its arguments */
 			parse_command(sh, cmd);
-			j = builtin_command(sh);
-			if (j == sh->num_builtins)
-			{
-				/* TODO: add aliases contain also args */
-				alias_value = get_alias_value(sh, sh->args[0]);
-				if (alias_value)
-					sh->args[0] = alias_value;
-
-				external_command(sh);
-			}
-			cmd = _strtok_r(NULL, cmd_sep, &saveptr);
-
-			free(sh->args);
-			sh->args = NULL;
+			execute_command(sh);
+			cmd = _strtok_r(NULL, oprs, &saveptr);
 		}
 	}
+
 	sh->cmd_count = 0;
-
-	if (sh->args)
-	{
-		free(sh->args);
-		sh->args = NULL;
-	}
-
 	if (sh->input)
 		free_double(&sh->input);
 }
