@@ -2,18 +2,20 @@
 
 /**
  * main - Entry point for the shell program
+ * @argc: The number of arguments passed to the program
+ * @argv: An array[string] of the arguments passed to the program
  * Return: The status code of the last command executed
  */
-int main(void)
+int main(int argc, char **argv)
 {
-	shell sh = {NULL};
+	shell sh = {0};
 
-	init_shell(&sh);
+	init_shell(&sh, argc, argv);
 
 	while (sh.run)
 	{
-		if (isatty(STDIN_FILENO))
-			_printf("> ");
+		if (sh.interactive)
+			_printf("myshell> ");
 
 		execute_command(&sh);
 	}
@@ -24,24 +26,23 @@ int main(void)
 
 /**
  * init_shell - Initialize the shell struct
+ * @argc: The number of arguments passed to the program
+ * @argv: An array[string] of the arguments passed to the program
  * @sh: Pointer to the shell structure
  */
-void init_shell(shell *sh)
+void init_shell(shell *sh, int argc, char **argv)
 {
 	cmd *builtins = get_builtins();
 
 	sh->builtins = builtins;
-	sh->num_builtins = 0;
-	sh->cmd_count = 0;
-	sh->status = 0;
 	sh->run = 1;
-	copy_environ(sh);
+	sh->argc = argc;
+	sh->argv = argv;
 
 	while (builtins[sh->num_builtins].name)
 		sh->num_builtins++;
 
-	sh->aliases->name = NULL;
-	sh->aliases->value = NULL;
+	sh->interactive = isatty(STDIN_FILENO) && argc == 1;
 }
 
 /**
@@ -63,7 +64,6 @@ void free_shell(shell *sh)
 
 	for (i = 0; sh->aliases[i].name; i++)
 	{
-		_printf("%d", sh->aliases[i].name);
 		if (sh->aliases[i].name)
 			free(sh->aliases[i].name);
 		if (sh->aliases[i].value)

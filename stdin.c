@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stdio.h>
 
 #define MAX_ARGS 10
 
@@ -6,16 +7,17 @@ void process_variables(shell *sh, char **args);
 
 /**
  * read_line - reads a line from stdin
- * Return: pointer to the line read, or NULL if EOF is reached
+ * @fd: File descriptor to read from
  * @sh: Pointer to the shell structure
+ * Return: pointer to the line read, or NULL if EOF is reached
  */
-char *read_line(shell *sh)
+char *read_line(shell *sh, int fd)
 {
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t nread;
 
-	nread = _getline(&line, &len, STDIN_FILENO);
+	nread = _getline(&line, &len, fd);
 
 	if (nread == -1)
 	{
@@ -38,8 +40,20 @@ void read_input(shell *sh)
 {
 	char *cmd;
 	size_t old_size, new_size;
+	int fd = STDIN_FILENO;
 
-	while ((cmd = read_line(sh)) != NULL)
+	if (sh->argc > 1)
+	{
+		fd = open(sh->argv[1], O_RDONLY);
+		if (fd == -1)
+		{
+			perror("open");
+			sh->run = 0;
+			return;
+		}
+	}
+
+	while ((cmd = read_line(sh, fd)))
 	{
 		old_size = sizeof(char *) * (sh->cmd_count + 1);
 		new_size = sizeof(char *) * (sh->cmd_count + 2);
@@ -49,9 +63,12 @@ void read_input(shell *sh)
 		sh->input[sh->cmd_count + 1] = NULL;
 		sh->cmd_count++;
 
-		if (isatty(STDIN_FILENO))
+		if (sh->interactive)
 			break;
 	}
+
+	if (fd != STDIN_FILENO)
+		close(fd);
 }
 
 /**
@@ -79,18 +96,17 @@ void parse_command(shell *sh, char *cmd)
 	arg = _strtok(cmd, " ");
 	while (arg)
 	{
+		/* Check for comment */
+		if (arg[0] == '#')
+			break;
 		/* Remove double quotes */
 		start = arg;
 		end = start + _strlen(start) - 1;
 		if (start[0] == '"' && end[0] == '"')
-		{
-			end[0] = '\0';
-			start++;
-		}
+			(end[0] = '\0', start++);
 
 		args[i] = start;
-		i++;
-		if (i >= MAX_ARGS)
+		if (++i >= MAX_ARGS)
 		{
 			_fprintf(STDERR_FILENO, "Error: too many arguments\n");
 			exit(EXIT_FAILURE);

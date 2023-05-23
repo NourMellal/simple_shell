@@ -43,7 +43,7 @@ void external_command(shell *sh)
 		pid = fork();
 		if (pid == 0)
 		{
-			ret = execve(full_path, sh->args, sh->environ_copy);
+			ret = execve(full_path, sh->args, environ);
 			if (ret == -1)
 				perror(sh->args[0]);
 			_exit(ret);

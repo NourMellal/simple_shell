@@ -26,11 +26,29 @@ int find_environment(char *name)
  */
 void update_environment(shell *sh, char *env_var)
 {
-	size_t env_count = 0;
+	size_t env_count = 0, name_len;
 	size_t old_size, new_size;
 	char **new_environ, **env_ptr;
+	int index;
+	char *name_end = _strchr(env_var, '=');
+	char name[BUFFER_SIZE];
 
-	/* Count the number of environment variables */
+	if (!name_end)
+		return;
+	if (!sh->environ_copy)
+		sh->environ_copy = copy_environ();
+
+	name_len = name_end - env_var;
+	_memcpy(name, env_var, name_len);
+	name[name_len] = '\0';
+	index = find_environment(name);
+
+	if (index >= 0)
+	{
+		free(sh->environ_copy[index]);
+		sh->environ_copy[index] = env_var;
+		return;
+	}
 	for (env_ptr = sh->environ_copy; *env_ptr; env_ptr++)
 		env_count++;
 
@@ -38,21 +56,15 @@ void update_environment(shell *sh, char *env_var)
 	new_size = (env_count + 2) * sizeof(char *);
 	new_environ = _realloc(sh->environ_copy, old_size, new_size);
 
-	if (new_environ == NULL)
+	if (!new_environ)
 	{
 		_fprintf(STDERR_FILENO, "Failed to allocate memory\n");
 		free(env_var);
 		return;
 	}
-
-	/* Set the environ_copy variable to point to the newly allocated memory */
 	sh->environ_copy = new_environ;
-	/* Add the new environment variable to the end of the array */
 	sh->environ_copy[env_count] = env_var;
-	/* Set the last element of the array to NULL */
 	sh->environ_copy[env_count + 1] = NULL;
-
-	/* Update the global environ variable */
 	environ = sh->environ_copy;
 }
 
@@ -67,6 +79,9 @@ void remove_environment(shell *sh)
 	/* If the environment variable is not found, return */
 	if (index == -1)
 		return;
+
+	if (!sh->environ_copy)
+		sh->environ_copy = copy_environ();
 
 	free(sh->environ_copy[index]);
 
@@ -123,11 +138,5 @@ void cmd_setenv(shell *sh)
 	_sprintf(env_var, "%s=%s", sh->args[1], sh->args[2]);
 
 	if (find_environment(sh->args[1]) == -1)
-	{
-		/* If environ_copy has not been initialized yet */
-		if (sh->environ_copy == NULL)
-			copy_environ(sh);
-
 		update_environment(sh, env_var);
-	}
 }
