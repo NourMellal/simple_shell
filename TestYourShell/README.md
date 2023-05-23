@@ -1,7 +1,7 @@
 ## Simple shell Test suite
 ##### A collection of tests for The simple shell project
 
-This repository contains ongoing development of a test suite for simple shell project.
+This folder contains ongoing development of a test suite for simple shell project.
 
 ### Updates
 :warning: UNDER INSTRUCTIONS
