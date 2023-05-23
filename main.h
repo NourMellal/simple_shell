@@ -58,6 +58,8 @@ typedef struct alias
  * @builtins: A pointer to an array of containing about the builtin commands
  * @run: A boolean whether or not the shell should continue running
  * @aliases: An array of alias structures containing user-defined aliases
+ * @argc: args count
+ * @argv: arguments v
  */
 
 struct shell
