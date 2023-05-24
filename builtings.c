@@ -9,7 +9,7 @@ static void cmd_exit(shell *sh)
 {
 	if (sh->args[1])
 	{
-		if (!is_number(sh->args[1]))
+		if (!is_num(sh->args[1]))
 		{
 			_fprintf(STDERR_FILENO, "exit: %s: numeric required\n",
 					 sh->args[1]);
@@ -24,7 +24,7 @@ static void cmd_exit(shell *sh)
 			return;
 		}
 
-		if (is_number(sh->args[1]))
+		if (is_num(sh->args[1]))
 			sh->status = _atoi(sh->args[1]);
 	}
 
