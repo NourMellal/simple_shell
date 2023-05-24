@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 	while (sh.run)
 	{
 		if (sh.interactive)
-			_printf("myshell> ");
+			_printf("$ ");
 
 		process_command(&sh);
 	}
