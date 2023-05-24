@@ -47,7 +47,7 @@ void read_input(shell *sh)
 		fd = open(sh->argv[1], O_RDONLY);
 		if (fd == -1)
 		{
-			perror("open");
+			pError("open");
 			sh->run = 0;
 			return;
 		}
@@ -88,12 +88,12 @@ void parse_command(shell *sh, char *cmd)
 		_fprintf(STDERR_FILENO, "Error: memory allocation failed\n");
 		exit(EXIT_FAILURE);
 	}
-	if (!cmd)
+	if (!cmd || !*cmd)
 	{
 		sh->args = args;
 		return;
 	}
-	arg = _strtok(cmd, " \t");
+	arg = _strtok(cmd, " \t\n\r");
 	while (arg)
 	{
 		/* Check for comment */
@@ -111,7 +111,7 @@ void parse_command(shell *sh, char *cmd)
 			_fprintf(STDERR_FILENO, "Error: too many arguments\n");
 			exit(EXIT_FAILURE);
 		}
-		arg = _strtok(NULL, " \t");
+		arg = _strtok(NULL, " \t\n\r");
 	}
 	args[i] = NULL;
 	process_variables(sh, args);
