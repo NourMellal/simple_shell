@@ -115,7 +115,7 @@ int _atoi(const char *str);
 int _itoa(long n, char s[], int base, int sign);
 void *_realloc(void *ptr, ssize_t old_size, ssize_t new_size);
 void free_double(char ***ptr);
-
+int is_num(char *str);
 
 /* input*/
 void read_input(shell *sh);

@@ -1,6 +1,26 @@
 #include "main.h"
 
 /**
+ * is_num - Checks if a string represents a numeric value.
+ * @str: The input string to be checked.
+ *
+ * Return: 1 if the string represents a numeric value, 0 otherwise.
+ */
+int is_num(char *str)
+{
+	int i = 0;
+
+	if (str[0] == '-' || str[0] == '+')
+		i++;
+
+	for (; str[i]; i++)
+		if (str[i] >= '0' && str[i] <= '9')
+			return (1);
+
+	return (0);
+}
+
+/**
  * _atoi - convert a string of digits into an integer
  * @str: the string to be converted
  * Return: the converted integer

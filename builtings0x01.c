@@ -102,6 +102,7 @@ void cmd_unsetenv(shell *sh)
 	if (sh->args[1] == NULL)
 	{
 		_fprintf(STDERR_FILENO, "Usage: unsetenv VARIABLE\n");
+		sh->status = 2;
 		return;
 	}
 
@@ -120,6 +121,7 @@ void cmd_setenv(shell *sh)
 	if (!sh->args[1] || !sh->args[2])
 	{
 		_fprintf(STDERR_FILENO, "Usage: setenv VARIABLE VALUE\n");
+		sh->status = 2;
 		return;
 	}
 
@@ -133,6 +135,7 @@ void cmd_setenv(shell *sh)
 	if (!env_var)
 	{
 		_fprintf(STDERR_FILENO, "Failed to allocate memory\n");
+		sh->status = 1;
 		return;
 	}
 	_sprintf(env_var, "%s=%s", sh->args[1], sh->args[2]);
