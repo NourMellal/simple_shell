@@ -21,11 +21,7 @@ char *read_line(shell *sh, int fd)
 
 	if (nread == -1)
 	{
-		if (sh->interactive)
-		{
-			sh->status = 1;
-			perror("read");
-		}
+
 		sh->run = 0;
 		free(line);
 		return (NULL);

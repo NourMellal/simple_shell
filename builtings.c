@@ -7,21 +7,28 @@
  */
 static void cmd_exit(shell *sh)
 {
-	int status = 0;
-
 	if (sh->args[1])
 	{
-		if (is_num(sh->args[1]))
-			sh->status = _atoi(sh->args[1]);
-		else
+		if (!is_number(sh->args[1]))
 		{
-			_fprintf(STDERR_FILENO, "%s: numeric required\n", sh->args[1]);
+			_fprintf(STDERR_FILENO, "exit: %s: numeric required\n",
+					 sh->args[1]);
 			sh->status = 2;
+			return;
 		}
+
+		if (sh->args[2])
+		{
+			_fprintf(STDERR_FILENO, "exit: too many arguments\n");
+			sh->status = 1;
+			return;
+		}
+
+		if (is_number(sh->args[1]))
+			sh->status = _atoi(sh->args[1]);
 	}
 
-	free_shell(sh);
-	exit(status);
+	sh->run = 0;
 }
 
 /**
@@ -49,8 +56,8 @@ static void cmd_env(shell *sh)
 static void cmd_cd(shell *sh)
 {
 	char buf[BUFFER_SIZE];
-	char *oldpwd_var, *pwd_var;
 	char *new_dir, *old_dir;
+	char *oldpwd_var, *pwd_var;
 
 	old_dir = getcwd(buf, BUFFER_SIZE);
 
@@ -67,13 +74,15 @@ static void cmd_cd(shell *sh)
 	if (chdir(new_dir) != 0)
 		perror("cd");
 
+	/* Allocate memory for new environment variables */
 	oldpwd_var = malloc(100);
 	pwd_var = malloc(100);
 
-
+	/* Create new environment variables */
 	_sprintf(oldpwd_var, "OLDPWD=%s", old_dir);
 	_sprintf(pwd_var, "PWD=%s", getcwd(buf, BUFFER_SIZE));
 
+	/* Update environment */
 	update_environment(sh, oldpwd_var);
 	update_environment(sh, pwd_var);
 }
@@ -89,8 +98,8 @@ cmd *get_builtins(void)
 		{"env", cmd_env},
 		{"cd", cmd_cd},
 		{"setenv", cmd_setenv},
-		{"alias", cmd_alias},
 		{"unsetenv", cmd_unsetenv},
+		{"alias", cmd_alias},
 		{NULL, NULL},
 	};
 	return (builtins);
