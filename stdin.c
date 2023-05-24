@@ -47,7 +47,7 @@ void read_input(shell *sh)
 		fd = open(sh->argv[1], O_RDONLY);
 		if (fd == -1)
 		{
-			pError("open");
+			perror("open");
 			sh->run = 0;
 			return;
 		}
