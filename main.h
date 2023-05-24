@@ -103,12 +103,10 @@ void _fprintf(int fd, const char *fmt, ...);
 void _sprintf(char *str, const char *fmt, ...);
 
 /* Execution */
-void execute_command(shell *sh);
 char *find_command(char *command);
 int builtin_command(shell *sh);
-void external_command(shell *sh);
 void process_command(shell *sh);
-
+void execute_command(shell *sh, int *curr_line);
 
 /* num_tools */
 int _atoi(const char *str);

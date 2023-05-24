@@ -24,14 +24,15 @@ int builtin_command(shell *sh)
 /**
  * external_command - Self explain
  * @sh: Pointer to the shell structure
+ * @curr_line: Pointer to the current line number
  */
-void external_command(shell *sh)
+void external_command(shell *sh, int *curr_line)
 {
 	pid_t pid;
 	int ret, wstatus;
 	char *full_path = NULL;
 
-	/* absolute path or relative */
+	/* Check if the command is an absolute or relative path */
 	if (sh->args[0][0] == '/' || sh->args[0][0] == '.')
 		full_path = sh->args[0];
 	/* OR find the full path of the command */
@@ -55,13 +56,16 @@ void external_command(shell *sh)
 			if (WIFEXITED(wstatus))
 				sh->status = WEXITSTATUS(wstatus);
 		}
-		/* Free full_path in both the child and parent processes */
 		if (full_path != sh->args[0])
 			free(full_path);
 	}
 	else
 	{
-		_fprintf(STDERR_FILENO, "%s: command not found\n", sh->args[0]);
+		if (sh->interactive)
+			_fprintf(STDERR_FILENO, "%s: command not found\n", sh->args[0]);
+		else
+			_fprintf(STDERR_FILENO, "%s: line %d: %s: command not found\n",
+					 "shs", *curr_line, sh->args[0]);
 		sh->status = 127;
 	}
 }
@@ -69,8 +73,9 @@ void external_command(shell *sh)
 /**
  * execute_command - Executes a command
  * @sh: Pointer to the shell structure
+ * @curr_line: Pointer to the current line number
  */
-void execute_command(shell *sh)
+void execute_command(shell *sh, int *curr_line)
 {
 	int j;
 	char *alias_value;
@@ -83,8 +88,9 @@ void execute_command(shell *sh)
 		if (alias_value)
 			sh->args[0] = alias_value;
 
-		external_command(sh);
+		external_command(sh, curr_line);
 	}
+	(*curr_line)++;
 
 	free(sh->args);
 	sh->args = NULL;
@@ -97,7 +103,7 @@ void execute_command(shell *sh)
  */
 void process_command(shell *sh)
 {
-	int i;
+	int i, curr_line = 1;
 	char *oprs = ";|&", *saveptr, *cmd;
 
 	read_input(sh);
@@ -111,8 +117,9 @@ void process_command(shell *sh)
 		{
 			/* Parse the command and its arguments */
 			parse_command(sh, cmd);
+			/* Check if sh->args[0] is NULL or an empty string */
 			if (sh->args[0] && sh->args[0][0])
-				execute_command(sh);
+				execute_command(sh, &curr_line);
 			cmd = _strtok_r(NULL, oprs, &saveptr);
 		}
 	}
