@@ -13,7 +13,7 @@ ssize_t _getline(char **lineptr, size_t *n, int fd)
 	static char buffer[BUFFER_SIZE];
 	static size_t start, end;
 	char *line = *lineptr;
-	ssize_t bytes, size = 0, sceid;
+	ssize_t bytes = 0, size = 0, sceid = 0;
 
 	for (;;)
 	{
