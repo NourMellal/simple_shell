@@ -31,8 +31,8 @@ void external_command(shell *sh)
 	int ret, wstatus;
 	char *full_path = NULL;
 
-	/* Check if the command is an absolute path */
-	if (sh->args[0][0] == '/')
+	/* absolute path or relative */
+	if (sh->args[0][0] == '/' || sh->args[0][0] == '.')
 		full_path = sh->args[0];
 	/* OR find the full path of the command */
 	else
