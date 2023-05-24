@@ -1,3 +1,0 @@
-function get_diff(){
-    
-}

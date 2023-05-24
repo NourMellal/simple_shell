@@ -1,2 +1,0 @@
-name="/bin/ls + spaces"
-test="/bin/ls         "
