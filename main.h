@@ -107,6 +107,7 @@ char *find_command(char *command);
 int builtin_command(shell *sh);
 void process_command(shell *sh);
 void execute_command(shell *sh, int *curr_line);
+void external_command(shell *sh, int *curr_line);
 
 /* num_tools */
 int _atoi(const char *str);
