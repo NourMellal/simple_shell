@@ -1,6 +1,8 @@
 #include "main.h"
 #include <stdio.h>
 
+#define LINE_SIZE 1024
+
 /**
  * _getline - reads a line from a file descriptor (EOF)
  * @lineptr: pointer to the buffer where the line is stored

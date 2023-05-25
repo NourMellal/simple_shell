@@ -21,7 +21,6 @@ char *read_line(shell *sh, int fd)
 
 	if (nread == -1)
 	{
-
 		sh->run = 0;
 		free(line);
 		return (NULL);
@@ -48,7 +47,8 @@ void read_input(shell *sh)
 		fd = open(sh->argv[1], O_RDONLY);
 		if (fd == -1)
 		{
-			perror("open");
+			_fprintf(STDERR_FILENO, "%s: 0: Can't open %s\n",
+					 "./hsh", sh->argv[1]);
 			sh->status = 127;
 			sh->run = 0;
 			return;
@@ -141,16 +141,22 @@ void process_variables(shell *sh, char **args)
 			_sprintf(status_str, "%d", sh->status);
 			args[i] = status_str;
 		}
-		else if (_strcmp(args[i], "$$", -1) == 0)
+		else if (_strcmp(args[i], "$$", 2) == 0)
 		{
 			_sprintf(pid_str, "%d", getpid());
 			args[i] = pid_str;
+		}
+		else if (args[i][1] == '\0' || args[i][1] == ' ')
+		{
+			args[i] = "$";
 		}
 		else
 		{
 			arg_value = _getenv(args[i] + 1);
 			if (arg_value)
 				args[i] = arg_value;
+			else
+				args[i] = "";
 		}
 	}
 }

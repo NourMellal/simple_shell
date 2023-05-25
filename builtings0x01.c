@@ -42,7 +42,6 @@ void update_environment(shell *sh, char *env_var)
 	_memcpy(name, env_var, name_len);
 	name[name_len] = '\0';
 	index = find_environment(name);
-
 	if (index >= 0)
 	{
 		free(sh->environ_copy[index]);
@@ -66,6 +65,7 @@ void update_environment(shell *sh, char *env_var)
 	sh->environ_copy[env_count] = env_var;
 	sh->environ_copy[env_count + 1] = NULL;
 	environ = sh->environ_copy;
+	sh->status = 0;
 }
 
 /**
@@ -91,6 +91,7 @@ void remove_environment(shell *sh)
 
 	/* Update the global environ variable */
 	environ = sh->environ_copy;
+	sh->status = 0;
 }
 
 /**

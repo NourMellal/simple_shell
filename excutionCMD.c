@@ -64,8 +64,8 @@ void external_command(shell *sh, int *curr_line)
 		if (sh->interactive)
 			_fprintf(STDERR_FILENO, "%s: command not found\n", sh->args[0]);
 		else
-			_fprintf(STDERR_FILENO, "%s: line %d: %s: command not found\n",
-					 "shs", *curr_line, sh->args[0]);
+			_fprintf(STDERR_FILENO, "%s: %d: %s: not found\n",
+					 "./hsh", *curr_line, sh->args[0]);
 		sh->status = 127;
 	}
 }
@@ -125,6 +125,7 @@ void process_command(shell *sh)
 	}
 
 	sh->cmd_count = 0;
+
 	if (sh->input)
 		free_double(&sh->input);
 }
