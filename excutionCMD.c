@@ -120,6 +120,14 @@ void process_command(shell *sh)
 			/* Check if sh->args[0] is NULL or an empty string */
 			if (sh->args[0] && sh->args[0][0])
 				execute_command(sh, &curr_line);
+
+			/* Check for || and previous cmd success */
+			if (saveptr[0] == '|' && sh->status == 0)
+				break;
+			/* Check for && and previous cmd failed */
+			if (saveptr[0] == '&' && sh->status != 0)
+				break;
+
 			cmd = _strtok_r(NULL, oprs, &saveptr);
 		}
 	}

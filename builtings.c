@@ -12,7 +12,7 @@ static void cmd_exit(shell *sh)
 		if (!is_num(sh->args[1]) || sh->args[1][0] == '-')
 		{
 			_fprintf(STDERR_FILENO, "%s: 1: exit: Illegal number: %s\n",
-					 "./hsh" , sh->args[1]);
+					 "./hsh", sh->args[1]);
 			sh->status = 2;
 			return;
 		}
@@ -57,9 +57,9 @@ static void cmd_env(shell *sh)
  */
 static void cmd_cd(shell *sh)
 {
+	int chdir_status;
 	char buf[BUFFER_SIZE];
-	char *new_dir, *old_dir;
-	char *oldpwd_var, *pwd_var;
+	char *new_dir, *old_dir, *oldpwd_var, *pwd_var;
 
 	old_dir = getcwd(buf, BUFFER_SIZE);
 
@@ -79,22 +79,24 @@ static void cmd_cd(shell *sh)
 	else
 		new_dir = sh->args[1];
 
-	/* Set OLDPWD to current working directory */
-	oldpwd_var = malloc(100);
-	_sprintf(oldpwd_var, "OLDPWD=%s", old_dir);
-	update_environment(sh, oldpwd_var);
-
-	if (new_dir)
-		if (chdir(new_dir) != 0 && sh->args[1])
-			_fprintf(STDERR_FILENO, "%s: 1: cd: can't cd to %s\n",
-					 "./hsh", sh->args[1]);
-
-	/* Allocate memory for new environment variables */
-	pwd_var = malloc(100);
-	/* Create new environment variables */
-	_sprintf(pwd_var, "PWD=%s", getcwd(buf, BUFFER_SIZE));
-	/* Update environment */
-	update_environment(sh, pwd_var);
+	if (!new_dir)
+		return;
+	/* Change directory */
+	chdir_status = chdir(new_dir);
+	if (chdir_status == 0)
+	{
+		/* Set OLDPWD to current working directory */
+		oldpwd_var = malloc(100);
+		_sprintf(oldpwd_var, "OLDPWD=%s", old_dir);
+		update_environment(sh, oldpwd_var);
+		/* Allocate memory and create new env variables and upadte it */
+		pwd_var = malloc(100);
+		_sprintf(pwd_var, "PWD=%s", getcwd(buf, BUFFER_SIZE));
+		update_environment(sh, pwd_var);
+	}
+	else if (sh->args[1])
+		_fprintf(STDERR_FILENO, "%s: 1: cd: can't cd to %s\n",
+				 "./hsh", sh->args[1]);
 }
 
 /**

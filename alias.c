@@ -92,7 +92,7 @@ void cmd_alias(shell *sh)
 {
 	int i = 1, index, j;
 	char name[ALIASES_SIZE];
-	char *arg, *value, *equal_sign = NULL;
+	char *arg, *value, *equal_sign;
 
 	/* Use an early return if the first argument is NULL */
 	if (sh->args[i] == NULL)
@@ -104,6 +104,7 @@ void cmd_alias(shell *sh)
 	for (; sh->args[i] != NULL; i++)
 	{
 		arg = sh->args[i];
+		equal_sign = NULL;
 		/* Search for the '=' character in arg */
 		for (index = 0; arg[index] != '\0'; index++)
 		{
@@ -135,15 +136,34 @@ void cmd_alias(shell *sh)
  * @sh: Pointer to the shell structure
  * @name: Name of the alias to retrieve
  * Return: The value of the alias, or NULL if not found
+ * NOTE: hash-tables to optimize
  */
 char *get_alias_value(shell *sh, char *name)
 {
-	int j;
+	int i;
+	char *value = NULL;
+	alias *curr_alias;
 
-	for (j = 0; j < ALIASES_SIZE; j++)
+	for (i = 0; i < ALIASES_SIZE; i++)
 	{
-		if (sh->aliases[j].name && _strcmp(sh->aliases[j].name, name, -1) == 0)
-			return (sh->aliases[j].value);
+		curr_alias = &sh->aliases[i];
+		if (curr_alias->name && _strcmp(curr_alias->name, name, -1) == 0)
+		{
+			value = curr_alias->value;
+			break;
+		}
 	}
-	return (NULL);
+
+	/* Check if the value is already an alias */
+	for (i = 0; value && i < ALIASES_SIZE; i++)
+	{
+		curr_alias = &sh->aliases[i];
+		if (curr_alias->name && _strcmp(curr_alias->name, value, -1) == 0)
+		{
+			value = curr_alias->value;
+			break;
+		}
+	}
+
+	return (value);
 }
