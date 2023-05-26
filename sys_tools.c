@@ -4,6 +4,28 @@
 #define LINE_SIZE 1024
 
 /**
+ * _check_alloc - Checks the allocated memory is enough for a given size
+ * @line: Pointer to the allocated memory
+ * @size: Size of the data to be stored in the allocated memory
+ * @alloc_size: Pointer to the size of the allocated memory
+ * Return: Pointer to the allocated memory
+ */
+char *_check_alloc(char *line, ssize_t size, ssize_t *alloc_size)
+{
+	if (*alloc_size == 0)
+	{
+		*alloc_size = BUFFER_SIZE;
+		line = _realloc(line, size, *alloc_size);
+	}
+	else if (size + 2 > *alloc_size)
+	{
+		*alloc_size *= 2;
+		line = _realloc(line, size, *alloc_size);
+	}
+	return (line);
+}
+
+/**
  * _getline - reads a line from a file descriptor (EOF)
  * @lineptr: pointer to the buffer where the line is stored
  * @n: size of the buffer
@@ -15,7 +37,7 @@ ssize_t _getline(char **lineptr, size_t *n, int fd)
 	static char buffer[BUFFER_SIZE];
 	static size_t start, end;
 	char *line = *lineptr;
-	ssize_t bytes = 0, size = 0, sceid = 0;
+	ssize_t bytes = 0, size = 0, sceid = 0, alloc_size = *n;
 
 	for (;;)
 	{
@@ -24,7 +46,7 @@ ssize_t _getline(char **lineptr, size_t *n, int fd)
 			bytes = read(fd, buffer, BUFFER_SIZE);
 			if (bytes <= 0 && size > 0 && line[size - 1] != '\n')
 			{
-				line = _realloc(line, size, size + 2);
+				line = _check_alloc(line, size, &alloc_size);
 				if (!line)
 					return (-1);
 				line[size++] = '\n';
@@ -37,7 +59,7 @@ ssize_t _getline(char **lineptr, size_t *n, int fd)
 		while (start < end)
 		{
 			sceid = buffer[start++];
-			line = _realloc(line, size, size + 2);
+			line = _check_alloc(line, size, &alloc_size);
 			if (!line)
 				return (-1);
 			line[size++] = sceid;

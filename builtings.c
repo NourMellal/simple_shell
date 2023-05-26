@@ -12,7 +12,7 @@ static void cmd_exit(shell *sh)
 		if (!is_num(sh->args[1]) || sh->args[1][0] == '-')
 		{
 			_fprintf(STDERR_FILENO, "%s: 1: exit: Illegal number: %s\n",
-					 "./hsh", sh->args[1]);
+					 "./hsh" , sh->args[1]);
 			sh->status = 2;
 			return;
 		}
@@ -79,18 +79,21 @@ static void cmd_cd(shell *sh)
 	else
 		new_dir = sh->args[1];
 
-	chdir(new_dir);
+	/* Set OLDPWD to current working directory */
+	oldpwd_var = malloc(100);
+	_sprintf(oldpwd_var, "OLDPWD=%s", old_dir);
+	update_environment(sh, oldpwd_var);
+
+	if (new_dir)
+		if (chdir(new_dir) != 0 && sh->args[1])
+			_fprintf(STDERR_FILENO, "%s: 1: cd: can't cd to %s\n",
+					 "./hsh", sh->args[1]);
 
 	/* Allocate memory for new environment variables */
-	oldpwd_var = malloc(100);
 	pwd_var = malloc(100);
-
 	/* Create new environment variables */
-	_sprintf(oldpwd_var, "OLDPWD=%s", old_dir);
 	_sprintf(pwd_var, "PWD=%s", getcwd(buf, BUFFER_SIZE));
-
 	/* Update environment */
-	update_environment(sh, oldpwd_var);
 	update_environment(sh, pwd_var);
 }
 

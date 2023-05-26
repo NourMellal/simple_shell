@@ -46,24 +46,24 @@ void update_environment(shell *sh, char *env_var)
 	{
 		free(sh->environ_copy[index]);
 		sh->environ_copy[index] = env_var;
-		return;
 	}
-	for (env_ptr = sh->environ_copy; *env_ptr; env_ptr++)
-		env_count++;
-
-	old_size = env_count * sizeof(char *);
-	new_size = (env_count + 2) * sizeof(char *);
-	new_environ = _realloc(sh->environ_copy, old_size, new_size);
-
-	if (!new_environ)
+	else
 	{
-		_fprintf(STDERR_FILENO, "Failed to allocate memory\n");
-		free(env_var);
-		return;
+		for (env_ptr = sh->environ_copy; *env_ptr; env_ptr++)
+			env_count++;
+		old_size = env_count * sizeof(char *);
+		new_size = (env_count + 2) * sizeof(char *);
+		new_environ = _realloc(sh->environ_copy, old_size, new_size);
+		if (!new_environ)
+		{
+			_fprintf(STDERR_FILENO, "Failed to allocate memory\n");
+			free(env_var);
+			return;
+		}
+		sh->environ_copy = new_environ;
+		sh->environ_copy[env_count] = env_var;
+		sh->environ_copy[env_count + 1] = NULL;
 	}
-	sh->environ_copy = new_environ;
-	sh->environ_copy[env_count] = env_var;
-	sh->environ_copy[env_count + 1] = NULL;
 	environ = sh->environ_copy;
 	sh->status = 0;
 }
@@ -141,6 +141,5 @@ void cmd_setenv(shell *sh)
 	}
 	_sprintf(env_var, "%s=%s", sh->args[1], sh->args[2]);
 
-	if (find_environment(sh->args[1]) == -1)
-		update_environment(sh, env_var);
+	update_environment(sh, env_var);
 }
